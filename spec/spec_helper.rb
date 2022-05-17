@@ -18,7 +18,6 @@ command = Ferrum::Browser::Command.build({ window_size: [] }, nil)
 puts `'#{command.path}' --version`
 puts ""
 
-
 Capybara.save_path = File.join(CUPRITE_ROOT, "spec", "tmp", "save_path")
 
 Capybara.register_driver(:cuprite) do |app|
@@ -82,13 +81,13 @@ RSpec.configure do |config|
     REGEXP
 
     metadata[:skip] = true if metadata[:full_description].match(/#{regexes}/)
-    metadata[:skip] = true if metadata[:requires] && metadata[:requires].include?(:active_element)
+    metadata[:skip] = true if metadata[:requires]&.include?(:active_element)
   end
 
   config.around do |example|
     remove_temporary_folders
 
-    if ENV["CI"]
+    if ENV.fetch("CI", nil)
       session = @session || TestSessions::Cuprite
       session.driver.browser.logger.truncate(0)
       session.driver.browser.logger.rewind
@@ -96,7 +95,7 @@ RSpec.configure do |config|
 
     example.run
 
-    if ENV["CI"] && example.exception
+    if ENV.fetch("CI", nil) && example.exception
       session = @session || TestSessions::Cuprite
       save_exception_artifacts(session.driver.browser, example.metadata)
     end

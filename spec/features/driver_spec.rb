@@ -927,7 +927,7 @@ module Capybara
       it "allows the driver to have a custom host" do
         # Use custom host "pointing" to localhost, specified by BROWSER_TEST_HOST env var.
         # Use /etc/hosts or iptables for this: https://superuser.com/questions/516208/how-to-change-ip-address-to-point-to-localhost
-        host = ENV["BROWSER_TEST_HOST"]
+        host = ENV.fetch("BROWSER_TEST_HOST", nil)
 
         skip "BROWSER_TEST_HOST not set" if host.nil? # skip test if var is unspecified
 
