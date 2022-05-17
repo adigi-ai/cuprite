@@ -119,12 +119,12 @@ module Capybara
       end
 
       it "allows the page to be scrolled" do
-        @session.visit("/cuprite/long_page")
-        @driver.resize(10, 10)
-        @driver.scroll_to(200, 100)
+        @session.visit("/cuprite/scroll_long_page")
+        @driver.scroll_to(200, 500)
+
         expect(
           @driver.evaluate_script("[window.scrollX, window.scrollY]")
-        ).to eq([200, 100])
+        ).to eq([200, 500])
       end
 
       it "supports specifying viewport size with an option" do
@@ -154,7 +154,7 @@ module Capybara
           create_screenshot file, full: true
           File.open(file, "rb") do |f|
             expect(ImageSize.new(f.read).size).to eq(
-              @driver.evaluate_script("[document.documentElement.clientWidth, document.documentElement.clientHeight]")
+              @driver.evaluate_script("[document.documentElement.scrollWidth, document.documentElement.scrollHeight]")
             )
           end
         end
@@ -195,7 +195,7 @@ module Capybara
 
           File.open(file, "rb") do |f|
             expect(ImageSize.new(f.read).size).to eq(
-              @driver.evaluate_script("[document.documentElement.clientWidth, document.documentElement.clientHeight]")
+              @driver.evaluate_script("[document.documentElement.scrollWidth, document.documentElement.scrollHeight]")
             )
           end
         end
@@ -764,7 +764,7 @@ module Capybara
             %r{/cuprite/jquery.min.js$} => File.size("#{CUPRITE_ROOT}/spec/support/public/jquery-1.11.3.min.js"),
             %r{/cuprite/jquery-ui.min.js$} => File.size("#{CUPRITE_ROOT}/spec/support/public/jquery-ui-1.11.4.min.js"),
             %r{/cuprite/test.js$} => File.size("#{CUPRITE_ROOT}/spec/support/public/test.js"),
-            %r{/cuprite/with_js$} => 2405
+            %r{/cuprite/with_js$} => 2553
           }
 
           resources_size.each do |resource, size|

@@ -14,9 +14,12 @@ require "support/test_app"
 require "support/external_browser"
 
 puts ""
-command = Ferrum::Browser::Command.build({ window_size: [], ignore_default_browser_options: true }, nil)
-puts `#{command.to_a.first} --version`
+command = Ferrum::Browser::Command.build({ window_size: [] }, nil)
+puts `'#{command.path}' --version`
 puts ""
+
+
+Capybara.save_path = File.join(CUPRITE_ROOT, "spec", "tmp", "save_path")
 
 Capybara.register_driver(:cuprite) do |app|
   options = {}
@@ -79,6 +82,7 @@ RSpec.configure do |config|
     REGEXP
 
     metadata[:skip] = true if metadata[:full_description].match(/#{regexes}/)
+    metadata[:skip] = true if metadata[:requires] && metadata[:requires].include?(:active_element)
   end
 
   config.around do |example|
@@ -126,7 +130,7 @@ RSpec.configure do |config|
   end
 
   def remove_temporary_folders
-    FileUtils.rm_rf("#{CUPRITE_ROOT}/screenshots")
-    FileUtils.rm_rf("#{CUPRITE_ROOT}/save_path_tmp")
+    FileUtils.rm_rf(File.join(CUPRITE_ROOT, "spec", "tmp", "screenshots"))
+    FileUtils.rm_rf(Capybara.save_path)
   end
 end
